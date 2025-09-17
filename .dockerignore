@@ -1,0 +1,9 @@
+.env.local
+setup.sh
+start.sh
+.git
+.gitlab_ci.yml
+README.md
+.venv/
+.idea/
+.vscode/

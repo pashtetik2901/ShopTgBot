@@ -1,0 +1,19 @@
+aiogram==3.21.0
+aiohttp==3.12.14
+sqlalchemy==2.0.41
+python-dotenv==1.1.1
+requests==2.32.4
+alembic==1.16.4
+pytz~=2025.2
+# если надо работать с sqlite
+aiosqlite==0.21.0
+# если надо фоновые задачи
+apscheduler==3.11.0
+loguru==0.7.3
+gspread==6.2.1
+oauth2client==4.1.3
+
+#если работа с гугл таблицей
+gspread
+oauth2client
+pandas
