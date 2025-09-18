@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, JSON, Boolean, ForeignKey, DateTime, func
 from sqlalchemy.orm import relationship, mapped_column, Mapped
 from datetime import datetime
+from typing import Optional
 
 from bot.database.db import Base
 
@@ -9,9 +10,9 @@ class User(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     telegram_id: Mapped[int] = mapped_column(unique=True)
-    name: Mapped[str]
-    phone: Mapped[str]
-    address: Mapped[str]
+    name: Mapped[Optional[str]]
+    phone: Mapped[Optional[str]]
+    address: Mapped[Optional[str]]
     
     carts: Mapped["Carts"] = relationship(back_populates='user', uselist=False)
     
