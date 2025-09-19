@@ -4,8 +4,9 @@ import logging
 from aiogram import Bot, Dispatcher
 from aiogram.enums import ParseMode
 from bot.config import Config
-from bot.handlers import setup_handlers
+# from bot.handlers import setup_handlers
 from aiogram.client.default import DefaultBotProperties
+from aiogram.fsm.storage.memory import MemoryStorage
 
 from bot.jobs import JobScheduler
 
@@ -23,7 +24,8 @@ bot = Bot(
     token=Config.TELEGRAM_TOKEN,
     default=DefaultBotProperties(parse_mode=ParseMode.HTML)
 )
-dp = Dispatcher()
+storage = MemoryStorage()
+dp = Dispatcher(storage=storage)
 
 # Регистрация обработчиков
 # setup_handlers(dp)

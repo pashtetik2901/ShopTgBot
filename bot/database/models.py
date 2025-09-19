@@ -15,6 +15,7 @@ class User(Base):
     address: Mapped[Optional[str]]
     
     carts: Mapped["Carts"] = relationship(back_populates='user', uselist=False)
+    order: Mapped["Order"] = relationship(back_populates='user', uselist=False)
     
 class Carts(Base):
     __tablename__ = 'carts'
@@ -63,6 +64,7 @@ class Order(Base):
     __tablename__ = "order"
     
     id: Mapped[int] = mapped_column(primary_key=True)
+    uid: Mapped[str]
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     delivery_method: Mapped[str]
     status: Mapped[str]
@@ -70,6 +72,7 @@ class Order(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     
     order_item: Mapped[list["OredrItem"]] = relationship(back_populates="order", uselist=True)
+    user: Mapped["User"] = relationship(back_populates="order", uselist=False)
     
 class OredrItem(Base):
     __tablename__ = "order_item"

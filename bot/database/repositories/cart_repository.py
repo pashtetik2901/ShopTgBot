@@ -15,9 +15,12 @@ class CartDAO(BaseDAO):
         user = result.scalars().first()
         if user:
             try:
-                user.carts = cls.model()
-                logging.info("Корзина для пользователя создана")
+                new_cart = cls.model()
+                user.carts = new_cart
                 await session.commit()
+                await session.refresh(new_cart)
+                logging.info("Корзина для пользователя создана")
+                return new_cart
             except Exception as err:
                 logging.error(f"Ошибка с созданием корзины: {err}")
                 await session.rollback()

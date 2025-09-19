@@ -9,6 +9,28 @@ class UserDAO(BaseDAO):
     model = User
     
     @classmethod
+    async def update_user(cls, telegram_id: int, name: str, phone: str, address: str, session: AsyncSession):
+        stmt = select(cls.model).where(cls.model.telegram_id == telegram_id)
+        result = await session.execute(stmt)
+        user = result.scalars().first()
+        
+        if user is None:
+            logging.error("Пользователь не найден")
+            return
+        
+        user.name = name
+        user.phone = phone
+        user.address = address
+        
+        try:
+            await session.commit()
+            await session.refresh(user)
+            logging.info("Новые данные пользователя добавлены!")
+        except Exception as err:
+            await session.rollback()
+            logging.error(f"Ошибка, добавить данные к пользователю не удалось: {err}")
+    
+    @classmethod
     async def add_first_user(cls, telegram_id: int, session: AsyncSession) -> User | None:
         new_user = cls.model(telegram_id=telegram_id)
         try:

@@ -2,6 +2,7 @@ from sqlalchemy import event
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 from sqlalchemy.orm import declarative_base
 from bot.config import Config
+from functools import wraps
 
 Base = declarative_base()
 
@@ -25,6 +26,14 @@ async_marker = async_sessionmaker(engine)
 async def get_connection():
     async with async_marker() as session:
         yield session
+        
+def with_session(func):
+    @wraps(func)
+    async def wrapper(*args, **kwargs):
+        async for session in get_connection():
+            return await func(*args, session=session, **kwargs)
+        return wrapper
+        
 
 # Настройка колляции NOCASE при подключении к базе данных
 @event.listens_for(engine.sync_engine, "connect")
