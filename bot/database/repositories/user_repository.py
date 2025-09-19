@@ -2,6 +2,7 @@ from sqlalchemy import select
 from bot.database.models import User
 from bot.database.repositories.base import BaseDAO
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.exc import IntegrityError
 import logging
 
 
@@ -39,6 +40,12 @@ class UserDAO(BaseDAO):
             logging.info("Пользователь добавлен!")
             await session.refresh(new_user)
             return new_user
+        
+        except IntegrityError:
+            logging.warning("Такой пользователь уже есть!")
+            await session.rollback()
+            return True
+        
         except Exception as err:
             logging.error(err)
             await session.rollback()

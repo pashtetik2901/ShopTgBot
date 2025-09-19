@@ -20,6 +20,9 @@ async def hello_handler(message: Message, state: FSMContext, session: AsyncSessi
     if user is None:
         await message.answer("Ошибка, обратитесь к администратору!")
         return
+    if user == True:
+        await message.answer("Здравствуйте, это бот интернет-магазин!!!")
+        return
     cart = await CartDAO.create_cart(user.id, session)
     if cart is None:
         await message.answer("Ошибка, обратитесь к администратору!")
