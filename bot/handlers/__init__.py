@@ -4,11 +4,15 @@ import os
 from aiogram import Router
 
 from bot.handlers.start_handler import start_router
+from bot.handlers.pass_callback_handler import pass_callback_router
+from bot.handlers.admin_handler import admin_router
 
 
 
 routers = [
-    start_router
+    start_router,
+    pass_callback_router,
+    admin_router
 ]
 
 

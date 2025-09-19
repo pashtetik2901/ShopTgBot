@@ -2,6 +2,7 @@ from sqlalchemy import select
 from bot.database.models import Category
 from bot.database.repositories.base import BaseDAO
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.exc import IntegrityError
 import logging
 
 class CategoryDAO(BaseDAO):
@@ -16,6 +17,12 @@ class CategoryDAO(BaseDAO):
             await session.refresh(new_category)
             logging.info("Категория создана!")
             return new_category
+        except IntegrityError:
+            await session.rollback()
+            stmt = select(cls.model).where(cls.model.name == name)
+            result = await session.execute(stmt)
+            category = result.scalars().first()
+            return category
         except Exception as err:
             logging.error(f"Произошла ошибка при создании категории: {err}")
             await session.rollback()
