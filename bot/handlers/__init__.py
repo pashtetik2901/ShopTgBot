@@ -5,14 +5,19 @@ from aiogram import Router
 
 from bot.handlers.start_handler import start_router
 from bot.handlers.pass_callback_handler import pass_callback_router
-from bot.handlers.admin_handler import admin_router
+from bot.handlers.add_product_admin_handler import add_prd_admin_router
+from bot.handlers.main_admin_handler import main_admin_router
+from bot.handlers.redactor_prd_admin import redactor_prd_admin
 
 
 
 routers = [
     start_router,
     pass_callback_router,
-    admin_router
+    add_prd_admin_router,
+    main_admin_router,
+    redactor_prd_admin
+
 ]
 
 

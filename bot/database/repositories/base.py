@@ -4,6 +4,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 class BaseDAO:
     model = None
+    
+    @classmethod
+    async def get_all_notes(cls, session: AsyncSession):
+        stmt = select(cls.model)
+        result = await session.execute(stmt)
+        notes_list = result.scalars().all()
+        return notes_list
+        
 
     @classmethod
     async def get_ones_by_id(cls, id: int, session: AsyncSession):

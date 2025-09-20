@@ -20,3 +20,8 @@ class AddProductState(StatesGroup):
     wait_description = State()
     wait_price = State()
     wait_photo = State()
+    
+class RedactroState(StatesGroup):
+    choosing_field = State()
+    waiting_for_value = State()
+    

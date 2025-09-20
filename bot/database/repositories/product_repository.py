@@ -1,4 +1,5 @@
 from sqlalchemy import select, delete
+from sqlalchemy.orm import selectinload
 from typing import Any
 from bot.database.models import Products, Category
 from bot.database.repositories.base import BaseDAO
@@ -9,6 +10,7 @@ import logging
 class ProductDAO(BaseDAO):
     model = Products
     model_category = Category
+    
     
     @classmethod
     async def refresh_product(cls, product_id:int, data: dict[str, Any], session: AsyncSession):
@@ -58,7 +60,7 @@ class ProductDAO(BaseDAO):
 
 
     @classmethod
-    async def create_product(cls, category_id: int, name: str, description: str, 
+    async def create_product(cls, category_name: str, name: str, description: str, 
                 price: float, photo_url: str, session: AsyncSession) -> Products | None:
         new_product = cls.model(
             name=name,
@@ -67,7 +69,9 @@ class ProductDAO(BaseDAO):
             photo_url=photo_url
         )      
         
-        stmt = select(cls.model_category).where(cls.model_category.id == category_id)
+        stmt = select(cls.model_category).options(
+                selectinload(cls.model_category.product)
+            ).where(cls.model_category.name == category_name)
         result = await session.execute(stmt)
         category = result.scalars().first()
         
@@ -79,7 +83,7 @@ class ProductDAO(BaseDAO):
                 logging.info("Товар успешно создан!")
                 return new_product
             except Exception as err:
-                logging.error("Ошибка при создании товара!")
+                logging.error(f"Ошибка при создании товара!\n{err}")
                 await session.rollback()
         else:
-            logging.error("Ошибка, категория не найдена!")
+            logging.error(f"Ошибка, категория({category_name}) не найдена!")
