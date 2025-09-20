@@ -1,6 +1,6 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
-from bot.database.models import Products, Category
+from bot.database.models import Products, Category, Order
 from bot.utils.messages import Messages
 
 
@@ -30,6 +30,14 @@ class ReplyKeyboard:
 
 
 class InlineKeyboards:
+    @staticmethod
+    def all_order(order_list: list[Order]):
+        keyboard = []
+        for order in order_list:
+            button = [InlineKeyboardButton(text=order.id, callback_data=f"order_{order.id}")]
+            keyboard.append(button)
+        return InlineKeyboardMarkup(inline_keyboard=keyboard)
+    
     @staticmethod
     def build_edit_keyboard(product_id: int) -> InlineKeyboardMarkup:
         keyboard_buttons = [
