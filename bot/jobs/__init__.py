@@ -1,7 +1,7 @@
 from aiogram import Bot
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
-from bot.jobs.example_job import EverydayJob
+# from bot.jobs.example_job import EverydayJob
 
 
 class JobScheduler:
@@ -13,7 +13,7 @@ class JobScheduler:
         Запускает все фоновые задачи.
         """
         # Пример постановки задачи в очередь
-        self.scheduler.add_job(EverydayJob.start, "interval", seconds=300, kwargs={"bot": bot})
+        # self.scheduler.add_job(EverydayJob.start, "interval", seconds=300, kwargs={"bot": bot})
 
         self.scheduler.start()
 

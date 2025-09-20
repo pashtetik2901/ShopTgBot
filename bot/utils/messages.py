@@ -25,3 +25,11 @@ class Messages:
         "№ {id}\n"
         "Имя пользователя {username}"
     )
+    
+    EXIT = "Выйти"
+    FIRST_INLINE = "Посмотреть каталог"
+    
+    ADD_PRODUCT_ADMIN = "Добавить товар"
+    REDACTOR_PRODUCT_ADMIN = "Редактировать продукт"
+    SHOW_ORDER_ADMIN = "Показать все заказы"
+
