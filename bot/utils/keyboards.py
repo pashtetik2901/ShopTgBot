@@ -291,14 +291,14 @@ class InlineKeyboards:
             )
         ]])
 
-    @staticmethod
-    def all_order(order_list: list[Order]):
-        keyboard = []
-        for order in order_list:
-            button = [InlineKeyboardButton(
-                text=order.id, callback_data=f"order_{order.id}")]
-            keyboard.append(button)
-        return InlineKeyboardMarkup(inline_keyboard=keyboard)
+    # @staticmethod
+    # def all_order(order_list: list[Order]):
+    #     keyboard = []
+    #     for order in order_list:
+    #         button = [InlineKeyboardButton(
+    #             text=f"", callback_data=f"order_{order.id}")]
+    #         keyboard.append(button)
+    #     return InlineKeyboardMarkup(inline_keyboard=keyboard)
 
     @staticmethod
     def build_edit_keyboard(product_id: int) -> InlineKeyboardMarkup:
@@ -360,4 +360,104 @@ class InlineKeyboards:
             button = [InlineKeyboardButton(
                 text=el.name, callback_data=f'category_{el.id}')]
             keyboard.append(button)
+        return InlineKeyboardMarkup(inline_keyboard=keyboard)
+    
+    @staticmethod
+    def get_delivery_method_keyboard() -> InlineKeyboardMarkup:
+        """Клавиатура выбора способа доставки"""
+        keyboard = InlineKeyboardBuilder()
+        
+        keyboard.row(
+            InlineKeyboardButton(
+                text="🚗 Самовывоз",
+                callback_data="delivery_pickup"
+            )
+        )
+        
+        keyboard.row(
+            InlineKeyboardButton(
+                text="🚚 Курьерская доставка",
+                callback_data="delivery_courier"
+            )
+        )
+        
+        return keyboard.as_markup()
+
+    @staticmethod
+    def get_orders_keyboard(orders: list) -> InlineKeyboardMarkup:
+        """Клавиатура списка заказов"""
+        keyboard = InlineKeyboardBuilder()
+        
+        for order in orders:
+            keyboard.row(
+                InlineKeyboardButton(
+                    text=f"📦 #{order.uid} - {order.status} - {order.total_price} руб.",
+                    callback_data=f"order_{order.id}"
+                )
+            )
+        
+        return keyboard.as_markup()
+
+    @staticmethod
+    def get_order_actions_keyboard(order_id: int, current_status: str) -> InlineKeyboardMarkup:
+        """Клавиатура действий с заказом"""
+        keyboard = InlineKeyboardBuilder()
+        
+        keyboard.row(
+            InlineKeyboardButton(
+                text="📊 Изменить статус",
+                callback_data=f"change_status_{order_id}"
+            )
+        )
+        
+        keyboard.row(
+            InlineKeyboardButton(
+                text="⬅️ Назад к списку",
+                callback_data="back_to_orders"
+            )
+        )
+        
+        return keyboard.as_markup()
+
+    @staticmethod
+    def get_status_options_keyboard() -> InlineKeyboardMarkup:
+        """Клавиатура выбора статуса"""
+        keyboard = InlineKeyboardBuilder()
+        
+        statuses = [
+            ("pending", "⏳ В обработке"),
+            ("confirmed", "✅ Подтвержден"),
+            ("shipped", "🚚 Отправлен"),
+            ("delivered", "📦 Доставлен"),
+            ("cancelled", "❌ Отменен")
+        ]
+        
+        for status_code, status_text in statuses:
+            keyboard.row(
+                InlineKeyboardButton(
+                    text=status_text,
+                    callback_data=f"status_{status_code}"
+                )
+            )
+        
+        return keyboard.as_markup()
+    
+    @staticmethod
+    def get_delivery_method_keyboard():
+        """Клавиатура выбора способа доставки"""
+        keyboard = [
+            [InlineKeyboardButton(text="🚗 Самовывоз", callback_data="delivery_pickup")],
+            [InlineKeyboardButton(text="🚚 Доставка", callback_data="delivery_delivery")]
+        ]
+        return InlineKeyboardMarkup(inline_keyboard=keyboard)
+
+    @staticmethod
+    def get_confirmation_keyboard():
+        """Клавиатура подтверждения заказа"""
+        keyboard = [
+            [
+                InlineKeyboardButton(text="✅ Да, подтверждаю", callback_data="confirm_yes"),
+                InlineKeyboardButton(text="❌ Отменить", callback_data="confirm_no")
+            ]
+        ]
         return InlineKeyboardMarkup(inline_keyboard=keyboard)

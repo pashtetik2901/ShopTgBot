@@ -15,6 +15,15 @@ class CartItemDAO(BaseDAO):
     model_product = Products
     
     @classmethod
+    async def get_cart_total(cls, user_id: int, session: AsyncSession) -> float:
+        """Получить общую сумму корзины"""
+        cart_items = await cls.get_products_from_cart(user_id, session)
+        total = 0
+        for item in cart_items:
+            total += item['product'].price * item['quantity']
+        return total
+    
+    @classmethod
     async def get_cart_with_items(cls, telegram_id: int, session: AsyncSession) -> Carts:
         """Получить корзину с товарами"""
         stmt = select(cls.model_cart).options(

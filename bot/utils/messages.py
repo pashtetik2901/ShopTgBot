@@ -31,5 +31,5 @@ class Messages:
     
     ADD_PRODUCT_ADMIN = "Добавить товар"
     REDACTOR_PRODUCT_ADMIN = "Редактировать продукт"
-    SHOW_ORDER_ADMIN = "Показать все заказы"
+    SHOW_ORDER_ADMIN = "📦 Управление заказами"
 

@@ -9,6 +9,28 @@ class CartDAO(BaseDAO):
     model_user = User
     
     @classmethod
+    async def clear_user_cart(cls, user_id: int, session: AsyncSession) -> bool:
+        """Очистить корзину пользователя"""
+        try:
+            stmt = select(cls.model).where(cls.model.user_id == user_id)
+            result = await session.execute(stmt)
+            cart = result.scalars().first()
+            
+            if cart:
+                # Удаляем все элементы корзины
+                for item in cart.items:
+                    await session.delete(item)
+                await session.commit()
+                logging.info(f"Корзина пользователя {user_id} очищена")
+                return True
+            return False
+            
+        except Exception as err:
+            logging.error(f"Ошибка при очистке корзины: {err}")
+            await session.rollback()
+            return False
+    
+    @classmethod
     async def create_cart(cls, user_id: int, session: AsyncSession):
         stmt = select(cls.model_user).where(cls.model_user.id == user_id)
         result = await session.execute(stmt)

@@ -38,14 +38,14 @@ async def exit_admin_handler(message: Message, state: FSMContext):
     await message.answer("Вы вышли из панели администратора!")
     await state.clear()
     
-@main_admin_router.message(F.text == Messages.SHOW_ORDER_ADMIN, StatusState.admin)
-@with_session
-async def show_all_order_handler(message: Message, state: FSMContext, session: AsyncSession):
-    order_list = await OrderDAO.get_all_notes(session)
-    if len(order_list) <= 0:
-        await message.answer("Нет заказов")
-    else:
-        await message.answer(
-            "Заказы",
-            reply_markup=InlineKeyboards.all_order(order_list)
-        )
+# @main_admin_router.message(F.text == Messages.SHOW_ORDER_ADMIN, StatusState.admin)
+# @with_session
+# async def show_all_order_handler(message: Message, state: FSMContext, session: AsyncSession):
+#     order_list = await OrderDAO.get_all_notes(session)
+#     if len(order_list) <= 0:
+#         await message.answer("Нет заказов")
+#     else:
+#         await message.answer(
+#             "Заказы",
+#             reply_markup=InlineKeyboards.all_order(order_list)
+#         )

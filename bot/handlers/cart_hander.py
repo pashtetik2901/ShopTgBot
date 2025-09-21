@@ -137,17 +137,17 @@ async def cancel_clear_cart(callback: CallbackQuery, state: FSMContext, session:
     # Перезагружаем корзину
     await update_cart_message(callback.message, session)
 
-@cart_router.callback_query(F.data == "create_order")
-@with_session
-async def create_order_handler(callback: CallbackQuery, session: AsyncSession = None):
-    """Оформить заказ"""
-    cart_items = await CartItemDAO.get_products_from_cart(callback.from_user.id, session)
+# @cart_router.callback_query(F.data == "create_order")
+# @with_session
+# async def create_order_handler(callback: CallbackQuery, session: AsyncSession = None):
+#     """Оформить заказ"""
+#     cart_items = await CartItemDAO.get_products_from_cart(callback.from_user.id, session)
     
-    if not cart_items:
-        await callback.answer("🛒 Корзина пуста!")
-        return
+#     if not cart_items:
+#         await callback.answer("🛒 Корзина пуста!")
+#         return
     
-    await callback.answer("Функция оформления заказа в разработке")
+#     await callback.answer("Функция оформления заказа в разработке")
 
 @cart_router.callback_query(F.data == "back_to_catalog")
 async def back_to_catalog_handler(callback: CallbackQuery):

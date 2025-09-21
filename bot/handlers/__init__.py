@@ -10,6 +10,8 @@ from bot.handlers.main_admin_handler import main_admin_router
 from bot.handlers.redactor_prd_admin import redactor_prd_admin
 from bot.handlers.user_catalog_handler import user_catalog_router
 from bot.handlers.cart_hander import cart_router
+from bot.handlers.order_handler import order_router
+from bot.handlers.order_admin_handler import admin_order_router
 
 
 
@@ -20,7 +22,9 @@ routers = [
     main_admin_router,
     redactor_prd_admin,
     user_catalog_router,
-    cart_router
+    cart_router,
+    order_router,
+    admin_order_router
 ]
 
 

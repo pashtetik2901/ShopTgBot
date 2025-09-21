@@ -72,7 +72,7 @@ class Order(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     
     order_item: Mapped[list["OredrItem"]] = relationship(back_populates="order", uselist=True)
-    user: Mapped["User"] = relationship(back_populates="order", uselist=False)
+    user: Mapped["User"] = relationship(back_populates="order", uselist=False, lazy='joined')
     
 class OredrItem(Base):
     __tablename__ = "order_item"
