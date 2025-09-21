@@ -7,6 +7,7 @@ from bot.database.repositories.cart_repository import CartDAO
 from bot.database.models import User, Carts
 from bot.database.db import with_session
 from sqlalchemy.ext.asyncio import AsyncSession
+from bot.utils.keyboards import ReplyKeyboard
 
 start_router = Router()
 
@@ -21,13 +22,13 @@ async def hello_handler(message: Message, state: FSMContext, session: AsyncSessi
         await message.answer("Ошибка, обратитесь к администратору!")
         return
     if user == True:
-        await message.answer("Здравствуйте, это бот интернет-магазин!!!")
+        await message.answer("Здравствуйте, это бот интернет-магазин!!!", reply_markup=ReplyKeyboard.get_main_menu_keyboard())
         return
     cart = await CartDAO.create_cart(user.id, session)
     if cart is None:
         await message.answer("Ошибка, обратитесь к администратору!")
         return
-    await message.answer("Здравствуйте, это бот интернет-магазин!!!")
+    await message.answer("Здравствуйте, это бот интернет-магазин!!!", reply_markup=ReplyKeyboard.get_main_menu_keyboard())
     
 
         

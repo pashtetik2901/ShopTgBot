@@ -19,16 +19,18 @@ async def get_all_product_handler(message: Message, state: FSMContext, session: 
     if len(product_list) == 0:
         await message.answer("Нет товаров для редактирования")
         return
+    
+    # Используем админскую клавиатуру с другим префиксом
     await message.answer(
         "Выберите товар, который нужно редактировать",
-        reply_markup=InlineKeyboards.all_product(product_list)
+        reply_markup=InlineKeyboards.admin_all_product(product_list)  # Используем админский вариант
     )
 
 
-@redactor_prd_admin.callback_query(F.data.startswith("product_"))
+@redactor_prd_admin.callback_query(F.data.startswith("admin_product_"))  # Изменили здесь
 async def select_product_handler(query: CallbackQuery, state: FSMContext):
     await query.answer()
-    _, product_id_str = query.data.split("_", 1)
+    _, _, product_id_str = query.data.split("_", 2)  # admin_product_123 → 3 части
     product_id = int(product_id_str)
 
     await state.update_data(product_id=product_id, changed_data={})
@@ -36,7 +38,7 @@ async def select_product_handler(query: CallbackQuery, state: FSMContext):
 
     await query.message.edit_text(
         "Выберите параметр для редактирования товара:",
-        reply_markup=InlineKeyboards.build_edit_keyboard(product_id)
+        reply_markup=InlineKeyboards.admin_product_detail_keyboard(product_id)
     )
 
 

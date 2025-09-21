@@ -13,6 +13,7 @@ from bot.utils.keyboards import ReplyKeyboard, InlineKeyboards
 from bot.utils.states import StatusState, AddProductState
 from bot.utils.local_manager import LocalManager
 from bot.config import Config
+import logging
 
 add_prd_admin_router = Router()
 
@@ -81,40 +82,55 @@ async def add_description_product_handler(message: Message, state: FSMContext):
     
 @add_prd_admin_router.message(AddProductState.wait_price)
 async def add_price_product_handler(message: Message, state: FSMContext):
-    price = message.text
-    await state.update_data(price=price)
-    await message.answer("Пришлите фото товара")
-    await state.set_state(AddProductState.wait_photo)
+    price_text = message.text
+    
+    # Проверяем, является ли введенное значение числом
+    try:
+        price = float(price_text)
+        await state.update_data(price=price)
+        await message.answer("Пришлите фото товара")
+        await state.set_state(AddProductState.wait_photo)
+    except ValueError:
+        await message.answer("❌ Пожалуйста, введите корректную цену (число). Например: 1000 или 999.99")
     
 @add_prd_admin_router.message(AddProductState.wait_photo)
 @with_session
 async def add_photo_product_handler(message: Message, state: FSMContext, session: AsyncSession):
+    if not message.photo:
+        await message.answer("❌ Пожалуйста, отправьте фото товара")
+        return
+    
     photo = message.photo[-1]
     file_id = photo.file_id
     
-    file = await message.bot.get_file(file_id)
-    file_path = file.file_path
-    file_bytes = await message.bot.download_file(file_path)
-    filename = f'{file_id}.png'
-    save_path = manager.save_photo(file_bytes.read(), filename)
-    
-    data = await state.get_data()
-    
-    product = await ProductDAO.create_product(
-        category_name=data.get("category_name"),
-        name=data.get("name_product"),
-        description=data.get("description"),
-        price=data.get("price"),
-        photo_url=save_path,
-        session=session
-    )
-    if product is None:
-        await message.answer("Произошла ошибка с добавлением товара", reply_markup=ReplyKeyboard.menu_admin_keyboard())
+    try:
+        file = await message.bot.get_file(file_id)
+        file_path = file.file_path
+        file_bytes = await message.bot.download_file(file_path)
+        filename = f'{file_id}.png'
+        save_path = manager.save_photo(file_bytes.read(), filename)
+        
+        data = await state.get_data()
+        
+        product = await ProductDAO.create_product(
+            category_name=data.get("category_name"),
+            name=data.get("name_product"),
+            description=data.get("description"),
+            price=data.get("price"),
+            photo_url=save_path,
+            session=session
+        )
+        
+        if product is None:
+            await message.answer("❌ Произошла ошибка с добавлением товара", reply_markup=ReplyKeyboard.menu_admin_keyboard())
+            await state.set_state(StatusState.admin)
+            return
+            
+        await message.answer("✅ Продукт успешно добавлен", reply_markup=ReplyKeyboard.menu_admin_keyboard())
+        await state.clear()
         await state.set_state(StatusState.admin)
-        return
-    await message.answer("Продукт успешно добавлен", reply_markup=ReplyKeyboard.menu_admin_keyboard())
-    await state.set_data()
-    await state.set_state(StatusState.admin)
-    
-    
+        
+    except Exception as e:
+        await message.answer("❌ Ошибка при обработке фото. Попробуйте еще раз.")
+        logging.error(f"Ошибка обработки фото: {e}")    
     

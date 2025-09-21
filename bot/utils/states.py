@@ -25,3 +25,7 @@ class RedactroState(StatesGroup):
     choosing_field = State()
     waiting_for_value = State()
     
+class CartStates(StatesGroup):
+    waiting_quantity = State()
+    confirm_clear = State()
+    

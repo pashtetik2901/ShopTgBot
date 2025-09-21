@@ -8,6 +8,8 @@ from bot.handlers.pass_callback_handler import pass_callback_router
 from bot.handlers.add_product_admin_handler import add_prd_admin_router
 from bot.handlers.main_admin_handler import main_admin_router
 from bot.handlers.redactor_prd_admin import redactor_prd_admin
+from bot.handlers.user_catalog_handler import user_catalog_router
+from bot.handlers.cart_hander import cart_router
 
 
 
@@ -16,8 +18,9 @@ routers = [
     pass_callback_router,
     add_prd_admin_router,
     main_admin_router,
-    redactor_prd_admin
-
+    redactor_prd_admin,
+    user_catalog_router,
+    cart_router
 ]
 
 

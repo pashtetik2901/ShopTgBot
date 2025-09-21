@@ -26,3 +26,26 @@ class CartDAO(BaseDAO):
                 await session.rollback()
         else:
             logging.error("Пользователь не найден, ошибка")
+            
+    @classmethod
+    async def get_or_create_cart(cls, user_id: int, session: AsyncSession):
+        """Получить или создать корзину для пользователя"""
+        try:
+            stmt = select(cls.model).where(cls.model.user_id == user_id)
+            result = await session.execute(stmt)
+            cart = result.scalars().first()
+            
+            if not cart:
+                # Создаем новую корзину
+                cart = cls.model(user_id=user_id)
+                session.add(cart)
+                await session.commit()
+                await session.refresh(cart)
+                logging.info(f"Создана новая корзина для пользователя {user_id}")
+            
+            return cart
+            
+        except Exception as err:
+            logging.error(f"Ошибка при получении/создании корзины: {err}")
+            await session.rollback()
+            return None

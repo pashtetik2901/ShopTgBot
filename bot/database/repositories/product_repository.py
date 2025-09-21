@@ -62,28 +62,31 @@ class ProductDAO(BaseDAO):
     @classmethod
     async def create_product(cls, category_name: str, name: str, description: str, 
                 price: float, photo_url: str, session: AsyncSession) -> Products | None:
-        new_product = cls.model(
-            name=name,
-            description=description,
-            price=price,
-            photo_url=photo_url
-        )      
-        
-        stmt = select(cls.model_category).options(
-                selectinload(cls.model_category.product)
-            ).where(cls.model_category.name == category_name)
-        result = await session.execute(stmt)
-        category = result.scalars().first()
-        
-        if category:
-            try:
+        try:
+            new_product = cls.model(
+                name=name,
+                description=description,
+                price=price,
+                photo_url=photo_url
+            )      
+            
+            stmt = select(cls.model_category).options(
+                    selectinload(cls.model_category.product)
+                ).where(cls.model_category.name == category_name)
+            result = await session.execute(stmt)
+            category = result.scalars().first()
+            
+            if category:
                 category.product.append(new_product)
                 await session.commit()
                 await session.refresh(new_product)
                 logging.info("Товар успешно создан!")
                 return new_product
-            except Exception as err:
-                logging.error(f"Ошибка при создании товара!\n{err}")
-                await session.rollback()
-        else:
-            logging.error(f"Ошибка, категория({category_name}) не найдена!")
+            else:
+                logging.error(f"Ошибка, категория({category_name}) не найдена!")
+                return None
+                
+        except Exception as err:
+            logging.error(f"Ошибка при создании товара!\n{err}")
+            await session.rollback()
+            return None
